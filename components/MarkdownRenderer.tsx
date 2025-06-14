@@ -4,7 +4,7 @@ import remarkGfm from "remark-gfm";
 import { Components } from "react-markdown";
 
 type MarkdownRendererProps = {
-    content: string;
+    content: string | null;
     inline?: boolean;
     className?: string;
 }
@@ -17,7 +17,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
     const components: Components = {
         h1: ({ node, ...props }) => <h1 className="text-3xl font-bold mt-6 mb-4" {...props} />,
         h2: ({ node, ...props }) => <h2 className="text-2xl font-semibold mt-5 mb-3" {...props} />,
-        h3: ({ node, ...props }) => <h3 className="text-xl font-medium mt-4 mb-2" {...props} />,
+        h3: ({ node, ...props }) => <h3 className="text-xl font-semibold mt-4 mb-2" {...props} />,
         h4: ({ node, ...props }) => <h4 className="text-lg font-medium mt-3 mb-2" {...props} />,
         h5: ({ node, ...props }) => <h5 className="text-base font-medium mt-2 mb-1" {...props} />,
         h6: ({ node, ...props }) => <h6 className="text-sm font-medium mt-2 mb-1" {...props} />,
@@ -40,7 +40,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         li: ({ node, ...props }) => <li className="mb-1" {...props} />,
         a: ({ node, ...props }) => (
             <a 
-                className="text-blue-600 underline hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" 
+                className="text-[#948979] underline hover:text-[#756e61] focus:outline-none" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 {...props} 
@@ -59,11 +59,11 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         code: ({ node, ...props }) => {
             const isInline = !props.className?.includes('language-');
             return isInline 
-                ? <code className="bg-gray-100 px-1 py-0.5 rounded text-sm font-mono" {...props} />
-                : <code className="block bg-gray-100 p-4 rounded-lg text-sm font-mono overflow-x-auto whitespace-pre" {...props} />
+                ? <code className="bg-[#f5f1ea] px-1 py-0.5 rounded text-sm font-mono" {...props} />
+                : <code className="block bg-[#f5f1ea] p-4 rounded-lg text-sm font-mono overflow-x-auto whitespace-pre" {...props} />
         },
         pre: ({ node, ...props }) => (
-            <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto my-4" {...props} />
+            <pre className="bg-[#f5f1ea] p-4 rounded-lg overflow-x-auto my-4" {...props} />
         ),
         
         // Table styling

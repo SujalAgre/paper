@@ -15,3 +15,7 @@ body {
   outline: none;
   font-family: 'Times New Roman', Times, serif;
 }
+
+code {
+  font-family: monospace;
+}
