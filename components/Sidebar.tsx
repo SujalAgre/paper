@@ -24,7 +24,7 @@ type Props = {
   chatObject: chat[]
   setChatObject: Dispatch<SetStateAction<chat[]>>
   currentChatId: string | null;
-  setCurrentChatId: Dispatch<SetStateaction<string | null>>;
+  setCurrentChatId: Dispatch<SetStateAction<string | null>>;
 };
 
 
@@ -54,7 +54,7 @@ const Sidebar = ({ setSidebar, chatObject, setChatObject, setMessages, currentCh
           Delete Chats
         </div>
 
-        <div className={`w-58 mt-7 pl-[3%] text-[#8a8a8a] ${chatObject !== 0 ? 'flex' : 'hidden'}`}>
+        <div className={`w-58 mt-7 pl-[3%] text-[#8a8a8a]`}>
           Chats
         </div>
 

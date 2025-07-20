@@ -6,7 +6,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 type message = {
-  role: "user" | "assistant" ;
+  role: "user" | "assistant";
   content: string | null;
 }
 
@@ -85,24 +85,26 @@ const Interface = ({ setSidebar, sidebar, chatObject, setChatObject, messages, s
     setMessages(finalMessages);
 
 
-    if(currentChatId){
+    if (currentChatId) {
       setChatObject(prevChat => prevChat.map(chat => chat.id === currentChatId ? {
         ...chat,
         messages: finalMessages,
         updatedAt: Date.now(),
         title: chat.title
-      }:chat
+      } : chat
       ))
     } else {
       const newChatId = uuidv4()
       const newChat: chat = {
-      id: newChatId,
-      title: input || "New Chat",
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-      messages: finalMessages,
-      model: model
-    }
+        id: newChatId,
+        title: input
+          ? input.slice(0, 50) + (input.length > 50 ? '...' : '')
+          : "New Chat",
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        messages: finalMessages,
+        model: model
+      }
 
       setChatObject(prev => [...prev, newChat]);
       setCurrentChatId(newChatId);
@@ -113,7 +115,7 @@ const Interface = ({ setSidebar, sidebar, chatObject, setChatObject, messages, s
   return (
     <>
       <div className="w-full pt-2 flex items-center">
-       <SidebarIcon fill="#4B352A" className={`w-7 ml-3 cursor-pointer ${sidebar? "hidden" : ""}`} onClick={() => {
+        <SidebarIcon fill="#4B352A" className={`w-7 ml-3 cursor-pointer ${sidebar ? "hidden" : ""}`} onClick={() => {
           setSidebar(true)
         }} />
 
@@ -156,27 +158,27 @@ const Interface = ({ setSidebar, sidebar, chatObject, setChatObject, messages, s
           <div className={` bg-[#ffffff] flex flex-col border-1 border-[#b3b3b3] rounded-lg w-[700px] justify-evenly items-center`}>
 
             <div className={'w-full flex justify-between items-center'}>
-                <textarea
-                  ref={textareaRef}
-                  className="ml-[2%] w-full resize-none mt-[25px] mb-[25px] overflow-auto max-h-[200px]"
-                  onChange={handleInput}
-                  value={input ? input : ''}
-                  placeholder="Ask something..."
-                  rows={1}
-                  onKeyDown={(e) => {
-                    if (e.key == "Enter" && !e.shiftKey) {
-                        e.preventDefault()
-                        askGPT();
-                      }
-                  }}
-                />
+              <textarea
+                ref={textareaRef}
+                className="ml-[2%] w-full resize-none mt-[25px] mb-[25px] overflow-auto max-h-[200px]"
+                onChange={handleInput}
+                value={input ? input : ''}
+                placeholder="Ask something..."
+                rows={1}
+                onKeyDown={(e) => {
+                  if (e.key == "Enter" && !e.shiftKey) {
+                    e.preventDefault()
+                    askGPT();
+                  }
+                }}
+              />
             </div>
             <div className={'w-full flex justify-between mb-2'}>
               <select className={'ml-2'} value={model} onChange={function(e) { setModel(e.target.value); }}>
                 <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile</option>
                 <option value="llama-3.1-8b-instant">llama-3.1-8b-instant</option>
                 <option value="gemma2-9b-it">gemma2-9b-it</option>
-                             </select>
+              </select>
               <button onClick={askGPT} className="w-[35px] h-[35px] mr-2 bg-[#ededed] hover:bg-[#e0e0e0] cursor-pointer text-[535353] rounded-lg" disabled={!input}>↑</button>
             </div>
           </div>
