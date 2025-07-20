@@ -9,7 +9,7 @@ type chat = {
   title: string,
   createdAt: number,
   updatedAt: number,
-  messages: [],
+  messages: message[],
   model: string
 }
 
