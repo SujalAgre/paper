@@ -97,7 +97,7 @@ const Interface = ({ setSidebar, sidebar, chatObject, setChatObject, messages, s
       const newChatId = uuidv4()
       const newChat: chat = {
       id: newChatId,
-      title: input,
+      title: input || "New Chat",
       createdAt: Date.now(),
       updatedAt: Date.now(),
       messages: finalMessages,
