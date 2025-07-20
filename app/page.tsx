@@ -11,8 +11,8 @@ type message = {
 type chat = {
   id: string,
   title: string,
-  createdat: number,
-  updatedat: number,
+  createdAt: number,
+  updatedAt: number,
   messages: [],
   model: string
 }
