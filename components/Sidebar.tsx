@@ -7,8 +7,8 @@ import { Dispatch, SetStateAction } from 'react';
 type chat = {
   id: string,
   title: string,
-  createdat: number,
-  updatedat: number,
+  createdAt: number,
+  updatedAt: number,
   messages: [],
   model: string
 }
