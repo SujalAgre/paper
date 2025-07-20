@@ -27,7 +27,7 @@ type Props = {
   messages: message[];
   setMessages: Dispatch<SetStateAction<message[]>>
   currentChatId: string | null;
-  setCurrentChatId: Dispatch<SetStateaction<string | null>>;
+  setCurrentChatId: Dispatch<SetStateAction<string | null>>;
 }
 
 const Interface = ({ setSidebar, sidebar, chatObject, setChatObject, messages, setMessages, currentChatId, setCurrentChatId }: Props) => {
