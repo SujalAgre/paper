@@ -3,28 +3,43 @@ import MarkdownRenderer from "@/components/MarkdownRenderer";
 import { useRef, useState, useEffect } from "react";
 import SidebarIcon from '@/app/assets/icons/sidebar.svg'
 import { Dispatch, SetStateAction } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
-type chat = {
+type message = {
   role: "user" | "assistant" ;
   content: string | null;
 }
 
-type sidebar = {
-  setSidebar: Dispatch<SetStateAction<boolean>>;
-  sidebar: boolean
+type chat = {
+  id: string,
+  title: string,
+  createdAt: number,
+  updatedAt: number,
+  messages: message[],
+  model: string
 }
 
-const Interface = ({ setSidebar, sidebar }: sidebar) => {
+type Props = {
+  setSidebar: Dispatch<SetStateAction<boolean>>;
+  sidebar: boolean
+  chatObject: chat[];
+  setChatObject: Dispatch<SetStateAction<chat[]>>;
+  messages: message[];
+  setMessages: Dispatch<SetStateAction<message[]>>
+  currentChatId: string | null;
+  setCurrentChatId: Dispatch<SetStateaction<string | null>>;
+}
+
+const Interface = ({ setSidebar, sidebar, chatObject, setChatObject, messages, setMessages, currentChatId, setCurrentChatId }: Props) => {
   const [input, setInput] = useState<string | null>(null);
-  const [chat, setChat] = useState<chat[]>([]);
-  const [currentMessage, setCurrentMessage] = useState<string | null>(null)
+  const [displayText, setDisplayText] = useState<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [model, setModel] = useState<string>('llama-3.3-70b-versatile');
 
   const startupMessages = ["Hmmmmmmmm..", "What's brewing upstairs?", 'print("welcome")', "Awesome", "btw i like playing minecraft", "Yayy!", "Yessir!", "Damn!"]
 
   useEffect(() => {
-    setCurrentMessage(startupMessages[randomMessage()]);
+    setDisplayText(startupMessages[randomMessage()]);
   }, []);
 
   const randomMessage = () => {
@@ -41,7 +56,9 @@ const Interface = ({ setSidebar, sidebar }: sidebar) => {
   };
 
   const askGPT = async () => {
-    const newMessage: chat = { role: "user", content: input }
+    const newMessage: message = { role: "user", content: input }
+    const updatedMessages = [...messages, newMessage];
+
     setInput("");
     const textarea = textareaRef.current;
     if (textarea) {
@@ -54,26 +71,54 @@ const Interface = ({ setSidebar, sidebar }: sidebar) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        chat: [...chat, newMessage],
+        chat: updatedMessages,
         model: model
       }),
     });
 
-    setChat(prev => [...prev, newMessage])
     const data = await response.json()
-    console.log(data)
-    setChat(prev => [...prev, { role: "assistant", content: data.reply }])
+
+    const assistantMessage: message = { role: "assistant", content: data.reply };
+
+    const finalMessages = [...updatedMessages, assistantMessage]; // Complete conversation
+
+    setMessages(finalMessages);
+
+
+    if(currentChatId){
+      setChatObject(prevChat => prevChat.map(chat => chat.id === currentChatId ? {
+        ...chat,
+        messages: finalMessages,
+        updatedAt: Date.now(),
+        title: chat.title
+      }:chat
+      ))
+    } else {
+      const newChatId = uuidv4()
+      const newChat: chat = {
+      id: newChatId,
+      title: input,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      messages: finalMessages,
+      model: model
+    }
+
+      setChatObject(prev => [...prev, newChat]);
+      setCurrentChatId(newChatId);
+    }
+    console.log(chatObject)
   }
 
   return (
     <>
       <div className="w-full pt-2 flex items-center">
-       {/* <SidebarIcon fill="#4B352A" className={`w-7 ml-3 cursor-pointer ${sidebar? "hidden" : ""}`} onClick={() => {
+       <SidebarIcon fill="#4B352A" className={`w-7 ml-3 cursor-pointer ${sidebar? "hidden" : ""}`} onClick={() => {
           setSidebar(true)
-        }} /> */}
+        }} />
 
         <div className="w-full flex justify-between items-center bg-[#ffffff]">
-          <a href="/" className="text-2xl font-bold ml-5 text-[#4B352A]">Paper</a>
+          <a href="/" className="text-2xl font-bold ml-5 text-black">Paper</a>
           {/* <a href="" className="mr-5 text-[#948979] hover:text-[#756e61]">Login</a> */}
         </div>
 
@@ -81,34 +126,34 @@ const Interface = ({ setSidebar, sidebar }: sidebar) => {
 
       <div className="h-[93vh] overflow-y-scroll flex flex-col items-center text-[#4B352A]">
         <div className="pt-10 pb-40">
-          {chat.length !== 0 ? (
-            chat.map((chat, index) => {
-              if (chat.role == "user") {
+          {messages.length !== 0 ? (
+            messages.map((messages, index) => {
+              if (messages.role == "user") {
                 return (
                   <div key={index} className="w-[700px] flex justify-end mb-5">
                     <div className="bg-[#f5f1ea] p-3 rounded-md max-w-[70%]">
-                      <p>{chat.content}</p>
+                      <p>{messages.content}</p>
                     </div>
                   </div>
                 )
-              } else if (chat.role == "assistant") {
+              } else if (messages.role == "assistant") {
                 return (
                   <div key={index} className="w-[700px]">
-                    <MarkdownRenderer content={chat.content} />
+                    <MarkdownRenderer content={messages.content} />
                   </div>
                 );
               }
             })
           ) : (
-            <div className="w-full h-[60vh] flex justify-center items-center text-3xl text-[#4B352A]">
-              {currentMessage}
+            <div className="w-full h-[60vh] flex justify-center items-center text-3xl text-black">
+              {displayText}
             </div>
           )}
         </div>
 
 
         <div className="bg-[#ffffff] flex justify-center items-center absolute bottom-0 pb-3">
-          <div className={` bg-[#ffffff] flex flex-col border-1 border-[#948979] rounded-lg w-[700px] justify-evenly items-center`}>
+          <div className={` bg-[#ffffff] flex flex-col border-1 border-[#b3b3b3] rounded-lg w-[700px] justify-evenly items-center`}>
 
             <div className={'w-full flex justify-between items-center'}>
                 <textarea
@@ -132,7 +177,7 @@ const Interface = ({ setSidebar, sidebar }: sidebar) => {
                 <option value="llama-3.1-8b-instant">llama-3.1-8b-instant</option>
                 <option value="gemma2-9b-it">gemma2-9b-it</option>
                              </select>
-              <button onClick={askGPT} className="w-[35px] h-[35px] mr-2 bg-[#948979] hover:bg-[#867d6f] cursor-pointer text-[#ffffff] rounded-lg" disabled={!input}>↑</button>
+              <button onClick={askGPT} className="w-[35px] h-[35px] mr-2 bg-[#ededed] hover:bg-[#e0e0e0] cursor-pointer text-[535353] rounded-lg" disabled={!input}>↑</button>
             </div>
           </div>
         </div>
