@@ -1,7 +1,7 @@
 "use client"
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import { useRef, useState, useEffect } from "react";
-import SidebarIcon from '@/app/assets/icons/sidebar.svg'
+import SidebarIcon from '@/app/assets/icons/Sidebar.svg'
 import { Dispatch, SetStateAction } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 

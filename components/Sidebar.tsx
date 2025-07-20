@@ -1,4 +1,4 @@
-import SidebarIcon from '@/app/assets/icons/sidebar.svg'
+import SidebarIcon from '@/app/assets/icons/Sidebar.svg'
 import NewChatIcon from '@/app/assets/icons/new.svg'
 import PurgeChatsIcon from '@/app/assets/icons/delete.svg'
 
